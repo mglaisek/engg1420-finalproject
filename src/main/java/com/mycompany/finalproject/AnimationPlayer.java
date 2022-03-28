@@ -8,6 +8,8 @@ import java.util.Scanner;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.shape.*;
+import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -36,26 +38,31 @@ public class AnimationPlayer extends Application {
             group = new Group();
             for(int i=0; i<=numAnimations; i++) {
                 if(sc.nextLine().equals("Line"))    {
-                    shapes[i] = new Line();
-                    shapes[i].setStartX();
-                    shapes[i].setStartY();
-                    shapes[i].setEndX();
-                    shapes[i].setEndY();
+                    Line li = new Line();
+                    li.setStartX(Integer.parseInt(sc.nextLine().substring(7)));
+                    li.setStartY(Integer.parseInt(sc.nextLine().substring(7)));
+                    li.setEndX(Integer.parseInt(sc.nextLine().substring(5)));
+                    li.setEndY(Integer.parseInt(sc.nextLine().substring(5)));
+                    shapes[i] = li;
                 }
                 else if(sc.nextLine().equals("Rectangle"))   {
-                    shapes[i] = new Rectangle();
-                    shapes[i].setLength(Integer.parseInt(sc.nextLine().substring(7)));
-                    shapes[i].setWidth(Integer.parseInt(sc.nextLine().substring(6)));
-                    shapes[i].setX(Integer.parseInt(sc.nextLine().substring(2)));
-                    shapes[i].setY(Integer.parseInt(sc.nextLine().substring(2)));
+                    Rectangle r = new Rectangle();
+                    r.setHeight(Integer.parseInt(sc.nextLine().substring(7)));
+                    r.setWidth(Integer.parseInt(sc.nextLine().substring(6)));
+                    r.setX(Integer.parseInt(sc.nextLine().substring(2)));
+                    r.setY(Integer.parseInt(sc.nextLine().substring(2)));
+                    shapes[i] = r;
                 }
                 else if(sc.nextLine().equals("Circle"))  {
-                    shapes[i] = new Circle();
-                    shapes[i].setRadius(Integer.parseInt(sc.nextLine().substring(2)));
-                    shapes[i].setX(Integer.parseInt(sc.nextLine().substring(2)));
-                    shapes[i].setY(Integer.parseInt(sc.nextLine().substring(2)));
+                    Circle c = new Circle();
+                    c.setRadius(Integer.parseInt(sc.nextLine().substring(2)));
+                    c.setCenterX(Integer.parseInt(sc.nextLine().substring(2)));
+                    c.setCenterY(Integer.parseInt(sc.nextLine().substring(2)));
+                    shapes[i] = c;
                 }
             }
+        } catch (FileNotFoundException e)   {
+            
         }
     }
     
