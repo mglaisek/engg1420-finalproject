@@ -20,7 +20,7 @@ public class AnimationPlayer extends Application {
     public AnimationPlayer()    {
     }
 
-    public loadAnimationFromFile(String filename)   {
+    public void loadAnimationFromFile(String filename)   {
         File file = new File(filename);
         try {
             Scanner sc = new Scanner(file);
@@ -30,7 +30,7 @@ public class AnimationPlayer extends Application {
         }
     }
     
-    public run()    {
+    public void run()    {
         launch();
     }
 
