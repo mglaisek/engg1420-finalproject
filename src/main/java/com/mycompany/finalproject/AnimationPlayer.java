@@ -1,5 +1,7 @@
 package com.mycompany.finalproject;
 
+import java.lang.Integer;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -16,6 +18,8 @@ import javafx.stage.Stage;
  */
 public class AnimationPlayer extends Application {
     int numFrames, fps, numAnimations;
+    Shape[] shapes;
+    Group group;
 
     public AnimationPlayer()    {
     }
@@ -27,6 +31,20 @@ public class AnimationPlayer extends Application {
             numFrames = sc.nextInt();
             fps = sc.nextInt();
             numAnimations = sc.nextInt();
+            shapes = new Shape[numAnimations];
+            group = new Group();
+            for(int i=0; i<=numAnimations; i++) {
+                if(sc.nextLine().equals("Line"))    {
+                    shapes[i] = new Line();
+                }
+                else if(sc.nextLine().equals("Rectangle"))   {
+                    shapes[i] = new Rectangle();
+                }
+                else if(sc.nextLine().equals("Circle"))  {
+                    shapes[i] = new Circle();
+                    shapes[i].setRadius(Integer.parseInt(sc.nextLine().substring(2)));
+                }
+            }
         }
     }
     
@@ -36,11 +54,7 @@ public class AnimationPlayer extends Application {
 
     @Override
     public void start(Stage stage) {
-        var javaVersion = SystemInfo.javaVersion();
-        var javafxVersion = SystemInfo.javafxVersion();
-        
-        var label = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
-        var scene = new Scene(new StackPane(label), 640, 480);
+        Scene scene = new Scene(group, 400, 300);
         stage.setScene(scene);
         stage.show();
     }
