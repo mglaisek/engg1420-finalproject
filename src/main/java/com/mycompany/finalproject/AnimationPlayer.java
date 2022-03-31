@@ -11,6 +11,7 @@ import javafx.application.Application;
 import javafx.scene.shape.*;
 import javafx.scene.paint.Color;
 
+import javafx.util.Duration;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -26,10 +27,8 @@ import javafx.stage.Stage;
  */
 public class AnimationPlayer extends Application {
     private int numFrames, fps, numAnimations;
-    private Shape[] shapes;
     private Group group;
     private Timeline timeline;
-    private AnimationTimer timer;
     
     public AnimationPlayer()    {
     }
@@ -38,28 +37,29 @@ public class AnimationPlayer extends Application {
         File file = new File(filename);
         try {
             Scanner sc = new Scanner(file);
-            String line[];
+            String line;
+            Duration time;
+            String pline[];
             boolean readNext;
             
             numFrames = sc.nextInt();
             fps = sc.nextInt();
             numAnimations = sc.nextInt();
             
-            sc.nextLine(); // skip the next line of blank space
-            
-            shapes = new Shape[numAnimations];
+            sc.nextLine(); // skip the next pline of blank space
             group = new Group();
             timeline = new Timeline(fps);
             
-            //<editor-fold defaultstate="collapsed" desc="Load shapes to be animated">
+            
             for(int i=0; i<=numAnimations; i++) {
+                //<editor-fold defaultstate="collapsed" desc="Load shapes and animations">
                 switch (sc.nextLine()) {
                     case "Line":
                         Line li = new Line();
                         
-                        line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("startX")) {
-                            li.setStartX(Integer.parseInt(line[1]));
+                        pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("startX")) {
+                            li.setStartX(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default startx
@@ -68,9 +68,9 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("startY")) {
-                            li.setStartY(Integer.parseInt(line[1]));
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("startY")) {
+                            li.setStartY(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default starty
@@ -79,9 +79,9 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("endX")) {
-                            li.setEndX(Integer.parseInt(line[1]));
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("endX")) {
+                            li.setEndX(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default endx
@@ -90,9 +90,9 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("endY")) {
-                            li.setEndY(Integer.parseInt(line[1]));
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("endY")) {
+                            li.setEndY(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default endy
@@ -101,10 +101,10 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("color")) {
-                            line = line[1].split(", ",3);
-                            Color co = new Color(Integer.parseInt(line[0]),Integer.parseInt(line[1]),Integer.parseInt(line[2]),255);
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("color")) {
+                            pline = pline[1].split(", ",3);
+                            Color co = new Color(Integer.parseInt(pline[0]),Integer.parseInt(pline[1]),Integer.parseInt(pline[2]),255);
                             li.setFill(co);
                             readNext = true;
                         }
@@ -114,22 +114,141 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("border")) {
-                            li.setStrokeWidth(Integer.parseInt(line[1]));
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("border")) {
+                            li.setStrokeWidth(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default border
                             li.setStrokeWidth(1);
                             readNext = false;
-                        }   shapes[i] = li;
+                        }   
+                        
+                        // load animations
+                        line = sc.nextLine();
+                        while(!line.isBlank())  {
+                            while(line.equals("effect"))    { // parses each effect until there are no more
+                                line = sc.nextLine();
+                                KeyFrame animation;
+                                if(line.equals("Jump")) {
+                                    int nX,nY;
+                                    KeyValue setX;
+                                    KeyValue setY;
+
+                                    line = sc.nextLine();
+                                    pline = line.split(": ",2);
+                                    if(pline[0].equals("start"))    {
+                                        time = new Duration(Integer.parseInt(pline[1])*1000/fps); // converts the frame number into milliseconds
+                                        readNext = true;
+                                    }
+                                    else    {
+                                        time = new Duration(0);
+                                        readNext = false;
+                                    }
+
+                                    if(readNext)    {
+                                        line = sc.nextLine();
+                                        pline = line.split(": ",2);
+                                    }
+                                    if(pline[0].equals("x"))    {
+                                        nX = Integer.parseInt(pline[1]);
+                                        readNext = true;
+                                    }
+                                    else    { // default, keep original X
+                                        nX = (int)li.getStartX();
+                                        readNext = false;
+                                    }
+
+                                    if(readNext)    {
+                                        line = sc.nextLine();
+                                        pline = line.split(": ",2);
+                                    }
+                                    if(pline[0].equals("y"))    {
+                                        nY = Integer.parseInt(pline[1]);
+                                        readNext = true;
+                                    }
+                                    else    { // default, keep original Y
+                                        nY = (int)li.getStartY();
+                                        readNext = false;
+                                    }
+
+                                    setX = new KeyValue(li.startXProperty(), nX);
+                                    setY = new KeyValue(li.startYProperty(), nY);
+                                    animation = new KeyFrame(time,setX,setY);
+                                    timeline.getKeyFrames().add(animation);
+                                }
+                                else if(line.equals("Show"))    {
+                                    line = sc.nextLine();
+                                    pline = line.split(": ",2);
+                                    if(pline[0].equals("start"))    {
+                                        time = new Duration(Integer.parseInt(pline[1])*1000/fps); // converts the frame number into milliseconds
+                                        readNext = true;
+                                    }
+                                    else    {
+                                        time = new Duration(0);
+                                        readNext = false;
+                                    }
+
+                                    KeyValue show = new KeyValue(li.visibleProperty(), true);
+                                    animation = new KeyFrame(time,show);
+                                    timeline.getKeyFrames().add(animation);
+                                }
+                                else if(line.equals("Hide"))    {
+                                    line = sc.nextLine();
+                                    pline = line.split(": ",2);
+                                    if(pline[0].equals("start"))    {
+                                        time = new Duration(Integer.parseInt(pline[1])*1000/fps); // converts the frame number into milliseconds
+                                        readNext = true;
+                                    }
+                                    else    {
+                                        time = new Duration(0);
+                                        readNext = false;
+                                    }
+
+                                    KeyValue hide = new KeyValue(li.visibleProperty(), false);
+                                    animation = new KeyFrame(time,hide);
+                                    timeline.getKeyFrames().add(animation);
+                                }
+                                else if(line.equals("ChangeColor")) {
+                                    line = sc.nextLine();
+                                    Color co;
+
+                                    pline = line.split(": ",2);
+                                    if(pline[0].equals("start"))    {
+                                        time = new Duration(Integer.parseInt(pline[1])*1000/fps); // converts the frame number into milliseconds
+                                        readNext = true;
+                                    }
+                                    else    {
+                                        time = new Duration(0);
+                                        readNext = false;
+                                    }
+
+                                    if(readNext)
+                                        pline = sc.nextLine().split(": ",2);
+                                    if(pline[0].equals("color")) {
+                                        pline = pline[1].split(", ",3);
+                                        co = new Color(Integer.parseInt(pline[0]),Integer.parseInt(pline[1]),Integer.parseInt(pline[2]),255);
+                                        readNext = true;
+                                    }
+                                    else    { // default color
+                                        co = Color.BLACK;
+                                        readNext = false;
+                                    }   
+                                    KeyValue change = new KeyValue(li.fillProperty(), co);
+                                    animation = new KeyFrame(time,change);
+                                    timeline.getKeyFrames().add(animation);
+                                }
+                            }
+                            line = sc.nextLine();
+                        }
+                        group.getChildren().add(li);
                         break;
                     case "Rectangle":
                         Rectangle r = new Rectangle();
                         
-                        line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("length"))    {
-                            r.setHeight(Integer.parseInt(line[1]));
+                        pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("length"))    {
+                            r.setHeight(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default length
@@ -138,9 +257,9 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("width")) {
-                            r.setWidth(Integer.parseInt(line[1]));
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("width")) {
+                            r.setWidth(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default width
@@ -149,9 +268,9 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("x")) {
-                            r.setX(Integer.parseInt(line[1]));
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("x")) {
+                            r.setX(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default x
@@ -160,9 +279,9 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("y")) {
-                            r.setY(Integer.parseInt(line[1]));
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("y")) {
+                            r.setY(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default y
@@ -171,10 +290,10 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("color")) {
-                            line = line[1].split(", ",3);
-                            Color co = new Color(Integer.parseInt(line[0]),Integer.parseInt(line[1]),Integer.parseInt(line[2]),255);
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("color")) {
+                            pline = pline[1].split(", ",3);
+                            Color co = new Color(Integer.parseInt(pline[0]),Integer.parseInt(pline[1]),Integer.parseInt(pline[2]),255);
                             r.setFill(co);
                             readNext = true;
                         }
@@ -184,9 +303,9 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("border")) {
-                            r.setStrokeWidth(Integer.parseInt(line[1]));
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("border")) {
+                            r.setStrokeWidth(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default border
@@ -195,24 +314,144 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("borderColor")) {
-                            line = line[1].split(", ",3);
-                            Color co = new Color(Integer.parseInt(line[0]),Integer.parseInt(line[1]),Integer.parseInt(line[2]),255);
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("borderColor")) {
+                            pline = pline[1].split(", ",3);
+                            Color co = new Color(Integer.parseInt(pline[0]),Integer.parseInt(pline[1]),Integer.parseInt(pline[2]),255);
                             r.setStroke(co);
                             readNext = true;
                         }
                         else    { // default bordercolor
                             r.setStroke(Color.BLACK);
                             readNext = false;
-                        }   shapes[i] = r;
+                        }   
+                        
+                        // load animations
+                        line = sc.nextLine();
+                        while(!line.isBlank())  {
+                            while(line.equals("effect"))    { // parses each effect until there are no more
+                                line = sc.nextLine();
+                                KeyFrame animation;
+                                if(line.equals("Jump")) {
+                                    int nX,nY;
+                                    KeyValue setX;
+                                    KeyValue setY;
+
+                                    line = sc.nextLine();
+                                    pline = line.split(": ",2);
+                                    if(pline[0].equals("start"))    {
+                                        time = new Duration(Integer.parseInt(pline[1])*1000/fps); // converts the frame number into milliseconds
+                                        readNext = true;
+                                    }
+                                    else    {
+                                        time = new Duration(0);
+                                        readNext = false;
+                                    }
+
+                                    if(readNext)    {
+                                        line = sc.nextLine();
+                                        pline = line.split(": ",2);
+                                    }
+                                    if(pline[0].equals("x"))    {
+                                        nX = Integer.parseInt(pline[1]);
+                                        readNext = true;
+                                    }
+                                    else    { // default, keep original X
+                                        nX = (int)r.getX();
+                                        readNext = false;
+                                    }
+
+                                    if(readNext)    {
+                                        line = sc.nextLine();
+                                        pline = line.split(": ",2);
+                                    }
+                                    if(pline[0].equals("y"))    {
+                                        nY = Integer.parseInt(pline[1]);
+                                        readNext = true;
+                                    }
+                                    else    { // default, keep original Y
+                                        nY = (int)r.getY();
+                                        readNext = false;
+                                    }
+
+                                    setX = new KeyValue(r.xProperty(), nX);
+                                    setY = new KeyValue(r.yProperty(), nY);
+                                    animation = new KeyFrame(time,setX,setY);
+                                    timeline.getKeyFrames().add(animation);
+                                }
+                                else if(line.equals("Show"))    {
+                                    line = sc.nextLine();
+                                    pline = line.split(": ",2);
+                                    if(pline[0].equals("start"))    {
+                                        time = new Duration(Integer.parseInt(pline[1])*1000/fps); // converts the frame number into milliseconds
+                                        readNext = true;
+                                    }
+                                    else    {
+                                        time = new Duration(0);
+                                        readNext = false;
+                                    }
+
+                                    KeyValue show = new KeyValue(r.visibleProperty(), true);
+                                    animation = new KeyFrame(time,show);
+                                    timeline.getKeyFrames().add(animation);
+                                }
+                                else if(line.equals("Hide"))    {
+                                    line = sc.nextLine();
+                                    pline = line.split(": ",2);
+                                    if(pline[0].equals("start"))    {
+                                        time = new Duration(Integer.parseInt(pline[1])*1000/fps); // converts the frame number into milliseconds
+                                        readNext = true;
+                                    }
+                                    else    {
+                                        time = new Duration(0);
+                                        readNext = false;
+                                    }
+
+                                    KeyValue hide = new KeyValue(r.visibleProperty(), false);
+                                    animation = new KeyFrame(time,hide);
+                                    timeline.getKeyFrames().add(animation);
+                                }
+                                else if(line.equals("ChangeColor")) {
+                                    line = sc.nextLine();
+                                    Color co;
+
+                                    pline = line.split(": ",2);
+                                    if(pline[0].equals("start"))    {
+                                        time = new Duration(Integer.parseInt(pline[1])*1000/fps); // converts the frame number into milliseconds
+                                        readNext = true;
+                                    }
+                                    else    {
+                                        time = new Duration(0);
+                                        readNext = false;
+                                    }
+
+                                    if(readNext)
+                                        pline = sc.nextLine().split(": ",2);
+                                    if(pline[0].equals("color")) {
+                                        pline = pline[1].split(", ",3);
+                                        co = new Color(Integer.parseInt(pline[0]),Integer.parseInt(pline[1]),Integer.parseInt(pline[2]),255);
+                                        readNext = true;
+                                    }
+                                    else    { // default color
+                                        co = Color.BLACK;
+                                        readNext = false;
+                                    }   
+                                    KeyValue change = new KeyValue(r.fillProperty(), co);
+                                    animation = new KeyFrame(time,change);
+                                    timeline.getKeyFrames().add(animation);
+                                }
+                            }
+                            line = sc.nextLine();
+                        }
+                        group.getChildren().add(r);
+                        
                         break;
                     case "Circle":
                         Circle c = new Circle();
                         
-                        line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("r")) {
-                            c.setRadius(Integer.parseInt(line[1]));
+                        pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("r")) {
+                            c.setRadius(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default radius
@@ -221,9 +460,9 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("x")) {
-                            c.setCenterX(Integer.parseInt(line[1]));
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("x")) {
+                            c.setCenterX(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default x
@@ -232,9 +471,9 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("y")) {
-                            c.setCenterY(Integer.parseInt(line[1]));
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("y")) {
+                            c.setCenterY(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default y
@@ -243,10 +482,10 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("color")) {
-                            line = line[1].split(", ",3);
-                            Color co = new Color(Integer.parseInt(line[0]),Integer.parseInt(line[1]),Integer.parseInt(line[2]),255);
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("color")) {
+                            pline = pline[1].split(", ",3);
+                            Color co = new Color(Integer.parseInt(pline[0]),Integer.parseInt(pline[1]),Integer.parseInt(pline[2]),255);
                             c.setFill(co);
                             readNext = true;
                         }
@@ -256,9 +495,9 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("border"))    {
-                            c.setStrokeWidth(Integer.parseInt(line[1]));
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("border"))    {
+                            c.setStrokeWidth(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
                         else    { // default border
@@ -267,10 +506,10 @@ public class AnimationPlayer extends Application {
                         }   
                         
                         if(readNext)
-                            line = sc.nextLine().split(": ",2);
-                        if(line[0].equals("borderColor")) {
-                            line = line[1].split(", ",3);
-                            Color co = new Color(Integer.parseInt(line[0]),Integer.parseInt(line[1]),Integer.parseInt(line[2]),255);
+                            pline = sc.nextLine().split(": ",2);
+                        if(pline[0].equals("borderColor")) {
+                            pline = pline[1].split(", ",3);
+                            Color co = new Color(Integer.parseInt(pline[0]),Integer.parseInt(pline[1]),Integer.parseInt(pline[2]),255);
                             c.setStroke(co);
                             readNext = true;
                         }
@@ -279,15 +518,131 @@ public class AnimationPlayer extends Application {
                             readNext = false;
                         }   
                         
-                        shapes[i] = c;
+                        // load animations
+                        line = sc.nextLine();
+                        while(!line.isBlank())  {
+                            while(line.equals("effect"))    { // parses each effect until there are no more
+                                line = sc.nextLine();
+                                KeyFrame animation;
+                                if(line.equals("Jump")) {
+                                    int nX,nY;
+                                    KeyValue setX;
+                                    KeyValue setY;
+
+                                    line = sc.nextLine();
+                                    pline = line.split(": ",2);
+                                    if(pline[0].equals("start"))    {
+                                        time = new Duration(Integer.parseInt(pline[1])*1000/fps); // converts the frame number into milliseconds
+                                        readNext = true;
+                                    }
+                                    else    {
+                                        time = new Duration(0);
+                                        readNext = false;
+                                    }
+
+                                    if(readNext)    {
+                                        line = sc.nextLine();
+                                        pline = line.split(": ",2);
+                                    }
+                                    if(pline[0].equals("x"))    {
+                                        nX = Integer.parseInt(pline[1]);
+                                        readNext = true;
+                                    }
+                                    else    { // default, keep original X
+                                        nX = (int)c.getCenterX();
+                                        readNext = false;
+                                    }
+
+                                    if(readNext)    {
+                                        line = sc.nextLine();
+                                        pline = line.split(": ",2);
+                                    }
+                                    if(pline[0].equals("y"))    {
+                                        nY = Integer.parseInt(pline[1]);
+                                        readNext = true;
+                                    }
+                                    else    { // default, keep original Y
+                                        nY = (int)c.getCenterY();
+                                        readNext = false;
+                                    }
+
+                                    setX = new KeyValue(c.centerXProperty(), nX);
+                                    setY = new KeyValue(c.centerYProperty(), nY);
+                                    animation = new KeyFrame(time,setX,setY);
+                                    timeline.getKeyFrames().add(animation);
+                                }
+                                else if(line.equals("Show"))    {
+                                    line = sc.nextLine();
+                                    pline = line.split(": ",2);
+                                    if(pline[0].equals("start"))    {
+                                        time = new Duration(Integer.parseInt(pline[1])*1000/fps); // converts the frame number into milliseconds
+                                        readNext = true;
+                                    }
+                                    else    {
+                                        time = new Duration(0);
+                                        readNext = false;
+                                    }
+
+                                    KeyValue show = new KeyValue(c.visibleProperty(), true);
+                                    animation = new KeyFrame(time,show);
+                                    timeline.getKeyFrames().add(animation);
+                                }
+                                else if(line.equals("Hide"))    {
+                                    line = sc.nextLine();
+                                    pline = line.split(": ",2);
+                                    if(pline[0].equals("start"))    {
+                                        time = new Duration(Integer.parseInt(pline[1])*1000/fps); // converts the frame number into milliseconds
+                                        readNext = true;
+                                    }
+                                    else    {
+                                        time = new Duration(0);
+                                        readNext = false;
+                                    }
+
+                                    KeyValue hide = new KeyValue(c.visibleProperty(), false);
+                                    animation = new KeyFrame(time,hide);
+                                    timeline.getKeyFrames().add(animation);
+                                }
+                                else if(line.equals("ChangeColor")) {
+                                    line = sc.nextLine();
+                                    Color co;
+
+                                    pline = line.split(": ",2);
+                                    if(pline[0].equals("start"))    {
+                                        time = new Duration(Integer.parseInt(pline[1])*1000/fps); // converts the frame number into milliseconds
+                                        readNext = true;
+                                    }
+                                    else    {
+                                        time = new Duration(0);
+                                        readNext = false;
+                                    }
+
+                                    if(readNext)
+                                        pline = sc.nextLine().split(": ",2);
+                                    if(pline[0].equals("color")) {
+                                        pline = pline[1].split(", ",3);
+                                        co = new Color(Integer.parseInt(pline[0]),Integer.parseInt(pline[1]),Integer.parseInt(pline[2]),255);
+                                        readNext = true;
+                                    }
+                                    else    { // default color
+                                        co = Color.BLACK;
+                                        readNext = false;
+                                    }   
+                                    KeyValue change = new KeyValue(c.fillProperty(), co);
+                                    animation = new KeyFrame(time,change);
+                                    timeline.getKeyFrames().add(animation);
+                                }
+                            }
+                            line = sc.nextLine();
+                        }
+                        group.getChildren().add(c);
                         break;
+                        
                     default:
                         break;
                 }
                 //</editor-fold>
                 
-            
-             
             }
         } catch (FileNotFoundException e)   {
             
