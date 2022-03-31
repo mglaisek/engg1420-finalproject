@@ -22,9 +22,6 @@ import javafx.scene.Group;
 import javafx.stage.Stage;
 
 
-/**
- * JavaFX App
- */
 public class AnimationPlayer extends Application {
     private int numFrames, fps, numAnimations;
     private Group group;
@@ -33,27 +30,45 @@ public class AnimationPlayer extends Application {
     public AnimationPlayer()    {
     }
 
+    public static void main(String[] args)  {
+        AnimationPlayer player = new AnimationPlayer();
+        player.loadAnimationFromFile("newfile.txt");
+        player.run();
+    }
+    
     public void loadAnimationFromFile(String filename)   {
         File file = new File(filename);
         try {
             Scanner sc = new Scanner(file);
+            // variables used for parsing
             String line;
             Duration time;
             String pline[];
             boolean readNext;
             
-            numFrames = sc.nextInt();
-            fps = sc.nextInt();
+            // parses the total frames of the animation
+            line = sc.nextLine();
+            pline = line.split(": ",2);
+            numFrames = Integer.parseInt(pline[1]);
+            
+            // parses the framerate
+            line = sc.nextLine();
+            pline = line.split(": ",2);
+            pline = pline[1].split("f",2);
+            fps = Integer.parseInt(pline[0]);
+            
+            // gets the number of animations
             numAnimations = sc.nextInt();
             
-            sc.nextLine(); // skip the next pline of blank space
+            sc.nextLine(); // skip the next line of blank space
+            
             group = new Group();
             timeline = new Timeline(fps);
-            
             
             for(int i=0; i<=numAnimations; i++) {
                 //<editor-fold defaultstate="collapsed" desc="Load shapes and animations">
                 switch (sc.nextLine()) {
+                    //<editor-fold defaultstate="collapsed" desc="Load a line">
                     case "Line":
                         Line li = new Line();
                         
@@ -243,6 +258,8 @@ public class AnimationPlayer extends Application {
                         }
                         group.getChildren().add(li);
                         break;
+                        //</editor-fold>
+                    //<editor-fold defaultstate="collapsed" desc="Load a rectangle">
                     case "Rectangle":
                         Rectangle r = new Rectangle();
                         
@@ -446,41 +463,43 @@ public class AnimationPlayer extends Application {
                         group.getChildren().add(r);
                         
                         break;
+                        //</editor-fold>
+                    //<editor-fold defaultstate="collapsed" desc="Load a circle">
                     case "Circle":
                         Circle c = new Circle();
-                        
+                        // parse the radius
                         pline = sc.nextLine().split(": ",2);
                         if(pline[0].equals("r")) {
                             c.setRadius(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
-                        else    { // default radius
+                        else    { // default radius of 1
                             c.setRadius(1);
                             readNext = false;
                         }   
-                        
+                        // parse the x position
                         if(readNext)
                             pline = sc.nextLine().split(": ",2);
                         if(pline[0].equals("x")) {
                             c.setCenterX(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
-                        else    { // default x
+                        else    { // default x of 0
                             c.setCenterX(0);
                             readNext = false;
                         }   
-                        
+                        // parse the y position
                         if(readNext)
                             pline = sc.nextLine().split(": ",2);
                         if(pline[0].equals("y")) {
                             c.setCenterY(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
-                        else    { // default y
+                        else    { // default y of 0
                             c.setCenterY(0);
                             readNext = false;
                         }   
-                        
+                        // parse the color
                         if(readNext)
                             pline = sc.nextLine().split(": ",2);
                         if(pline[0].equals("color")) {
@@ -489,22 +508,22 @@ public class AnimationPlayer extends Application {
                             c.setFill(co);
                             readNext = true;
                         }
-                        else    { // default color
+                        else    { // default color is black
                             c.setFill(Color.BLACK);
                             readNext = false;
                         }   
-                        
+                        // parse the border thickness
                         if(readNext)
                             pline = sc.nextLine().split(": ",2);
                         if(pline[0].equals("border"))    {
                             c.setStrokeWidth(Integer.parseInt(pline[1]));
                             readNext = true;
                         }
-                        else    { // default border
+                        else    { // default border thickness is 0
                             c.setStrokeWidth(0);
                             readNext = false;
                         }   
-                        
+                        // parse the border color
                         if(readNext)
                             pline = sc.nextLine().split(": ",2);
                         if(pline[0].equals("borderColor")) {
@@ -513,7 +532,7 @@ public class AnimationPlayer extends Application {
                             c.setStroke(co);
                             readNext = true;
                         }
-                        else    { // default border color
+                        else    { // default border color is black
                             c.setStroke(Color.BLACK);
                             readNext = false;
                         }   
@@ -637,15 +656,16 @@ public class AnimationPlayer extends Application {
                         }
                         group.getChildren().add(c);
                         break;
-                        
+                        //</editor-fold>
                     default:
                         break;
                 }
                 //</editor-fold>
                 
             }
+            sc.close();
         } catch (FileNotFoundException e)   {
-            
+            System.out.println("The file does not exist");
         }
     }
     
@@ -655,6 +675,7 @@ public class AnimationPlayer extends Application {
 
     @Override
     public void start(Stage stage) {
+        timeline.play();
         Scene scene = new Scene(group, 400, 300);
         stage.setScene(scene);
         stage.show();
