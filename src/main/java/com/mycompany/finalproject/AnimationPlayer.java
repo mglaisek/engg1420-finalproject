@@ -51,10 +51,12 @@ public class AnimationPlayer extends Application {
             group = new Group();
             timeline = new Timeline(fps);
             
+            //<editor-fold defaultstate="collapsed" desc="Load shapes to be animated">
             for(int i=0; i<=numAnimations; i++) {
                 switch (sc.nextLine()) {
                     case "Line":
                         Line li = new Line();
+                        
                         line = sc.nextLine().split(": ",2);
                         if(line[0].equals("startX")) {
                             li.setStartX(Integer.parseInt(line[1]));
@@ -63,7 +65,9 @@ public class AnimationPlayer extends Application {
                         else    { // default startx
                             li.setStartX(0);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("startY")) {
                             li.setStartY(Integer.parseInt(line[1]));
@@ -72,7 +76,9 @@ public class AnimationPlayer extends Application {
                         else    { // default starty
                             li.setStartY(0);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("endX")) {
                             li.setEndX(Integer.parseInt(line[1]));
@@ -81,7 +87,9 @@ public class AnimationPlayer extends Application {
                         else    { // default endx
                             li.setEndX(0);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("endY")) {
                             li.setEndY(Integer.parseInt(line[1]));
@@ -90,7 +98,9 @@ public class AnimationPlayer extends Application {
                         else    { // default endy
                             li.setEndY(0);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("color")) {
                             line = line[1].split(", ",3);
@@ -101,7 +111,9 @@ public class AnimationPlayer extends Application {
                         else    { // default color
                             li.setFill(Color.BLACK);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("border")) {
                             li.setStrokeWidth(Integer.parseInt(line[1]));
@@ -114,6 +126,7 @@ public class AnimationPlayer extends Application {
                         break;
                     case "Rectangle":
                         Rectangle r = new Rectangle();
+                        
                         line = sc.nextLine().split(": ",2);
                         if(line[0].equals("length"))    {
                             r.setHeight(Integer.parseInt(line[1]));
@@ -122,7 +135,9 @@ public class AnimationPlayer extends Application {
                         else    { // default length
                             r.setHeight(1);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("width")) {
                             r.setWidth(Integer.parseInt(line[1]));
@@ -131,7 +146,9 @@ public class AnimationPlayer extends Application {
                         else    { // default width
                             r.setWidth(1);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("x")) {
                             r.setX(Integer.parseInt(line[1]));
@@ -140,7 +157,9 @@ public class AnimationPlayer extends Application {
                         else    { // default x
                             r.setX(0);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("y")) {
                             r.setY(Integer.parseInt(line[1]));
@@ -149,7 +168,9 @@ public class AnimationPlayer extends Application {
                         else    { // default y
                             r.setY(0);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("color")) {
                             line = line[1].split(", ",3);
@@ -160,7 +181,9 @@ public class AnimationPlayer extends Application {
                         else    { // default color
                             r.setFill(Color.BLACK);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("border")) {
                             r.setStrokeWidth(Integer.parseInt(line[1]));
@@ -169,7 +192,9 @@ public class AnimationPlayer extends Application {
                         else    { // default border
                             r.setStrokeWidth(0);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("borderColor")) {
                             line = line[1].split(", ",3);
@@ -184,6 +209,7 @@ public class AnimationPlayer extends Application {
                         break;
                     case "Circle":
                         Circle c = new Circle();
+                        
                         line = sc.nextLine().split(": ",2);
                         if(line[0].equals("r")) {
                             c.setRadius(Integer.parseInt(line[1]));
@@ -192,7 +218,9 @@ public class AnimationPlayer extends Application {
                         else    { // default radius
                             c.setRadius(1);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("x")) {
                             c.setCenterX(Integer.parseInt(line[1]));
@@ -201,7 +229,9 @@ public class AnimationPlayer extends Application {
                         else    { // default x
                             c.setCenterX(0);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("y")) {
                             c.setCenterY(Integer.parseInt(line[1]));
@@ -210,7 +240,9 @@ public class AnimationPlayer extends Application {
                         else    { // default y
                             c.setCenterY(0);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("color")) {
                             line = line[1].split(", ",3);
@@ -221,7 +253,9 @@ public class AnimationPlayer extends Application {
                         else    { // default color
                             c.setFill(Color.BLACK);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("border"))    {
                             c.setStrokeWidth(Integer.parseInt(line[1]));
@@ -230,7 +264,9 @@ public class AnimationPlayer extends Application {
                         else    { // default border
                             c.setStrokeWidth(0);
                             readNext = false;
-                        }   if(readNext)
+                        }   
+                        
+                        if(readNext)
                             line = sc.nextLine().split(": ",2);
                         if(line[0].equals("borderColor")) {
                             line = line[1].split(", ",3);
@@ -241,13 +277,17 @@ public class AnimationPlayer extends Application {
                         else    { // default border color
                             c.setStroke(Color.BLACK);
                             readNext = false;
-                        }   shapes[i] = c;
+                        }   
+                        
+                        shapes[i] = c;
                         break;
                     default:
                         break;
                 }
+                //</editor-fold>
                 
-                
+            
+             
             }
         } catch (FileNotFoundException e)   {
             
