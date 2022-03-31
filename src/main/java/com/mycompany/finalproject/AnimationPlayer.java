@@ -9,6 +9,8 @@ import java.util.Scanner;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.shape.*;
+import javafx.scene.paint.Paint;
+import javafx.scene.paint.Color;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -30,34 +32,247 @@ public class AnimationPlayer extends Application {
         File file = new File(filename);
         try {
             Scanner sc = new Scanner(file);
+            String line[];
+            boolean readNext;
+            
             numFrames = sc.nextInt();
             fps = sc.nextInt();
             numAnimations = sc.nextInt();
-            sc.nextLine();
+            
+            sc.nextLine(); // skip the next line of blank space
+            
             shapes = new Shape[numAnimations];
             group = new Group();
+            
             for(int i=0; i<=numAnimations; i++) {
                 if(sc.nextLine().equals("Line"))    {
                     Line li = new Line();
-                    li.setStartX(Integer.parseInt(sc.nextLine().substring(7)));
-                    li.setStartY(Integer.parseInt(sc.nextLine().substring(7)));
-                    li.setEndX(Integer.parseInt(sc.nextLine().substring(5)));
-                    li.setEndY(Integer.parseInt(sc.nextLine().substring(5)));
+                    
+                    line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("startX")) {
+                        li.setStartX(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default startx
+                        li.setStartX(0);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("startY")) {
+                        li.setStartY(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default starty
+                        li.setStartY(0);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("endX")) {
+                        li.setEndX(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default endx
+                        li.setEndX(0);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("endY")) {
+                        li.setEndY(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default endy
+                        li.setEndY(0);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("color")) {
+                        line = line[1].split(", ",3);
+                        Color co = new Color(Integer.parseInt(line[0]),Integer.parseInt(line[1]),Integer.parseInt(line[2]),255);
+                        li.setFill(co);
+                        readNext = true;
+                    }
+                    else    { // default color
+                        li.setFill(Color.BLACK);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("border")) {
+                        li.setStrokeWidth(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default border
+                        li.setStrokeWidth(1);
+                        readNext = false;
+                    }
+                    
                     shapes[i] = li;
                 }
                 else if(sc.nextLine().equals("Rectangle"))   {
                     Rectangle r = new Rectangle();
-                    r.setHeight(Integer.parseInt(sc.nextLine().substring(7)));
-                    r.setWidth(Integer.parseInt(sc.nextLine().substring(6)));
-                    r.setX(Integer.parseInt(sc.nextLine().substring(2)));
-                    r.setY(Integer.parseInt(sc.nextLine().substring(2)));
+                    
+                    line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("length"))    {
+                        r.setHeight(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default length
+                        r.setHeight(1);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("width")) {
+                        r.setWidth(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default width
+                        r.setWidth(1);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("x")) {
+                        r.setX(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default x
+                        r.setX(0);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("y")) {
+                        r.setY(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default y
+                        r.setY(0);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("color")) {
+                        line = line[1].split(", ",3);
+                        Color co = new Color(Integer.parseInt(line[0]),Integer.parseInt(line[1]),Integer.parseInt(line[2]),255);
+                        r.setFill(co);
+                        readNext = true;
+                    }
+                    else    { // default color
+                        r.setFill(Color.BLACK);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("border")) {
+                        r.setStrokeWidth(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default border
+                        r.setStrokeWidth(0);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("borderColor")) {
+                        line = line[1].split(", ",3);
+                        Color co = new Color(Integer.parseInt(line[0]),Integer.parseInt(line[1]),Integer.parseInt(line[2]),255);
+                        r.setStroke(co);
+                        readNext = true;
+                    }
+                    else    { // default bordercolor
+                        r.setStroke(Color.BLACK);
+                        readNext = false;
+                    }
+                    
                     shapes[i] = r;
                 }
                 else if(sc.nextLine().equals("Circle"))  {
                     Circle c = new Circle();
-                    c.setRadius(Integer.parseInt(sc.nextLine().substring(2)));
-                    c.setCenterX(Integer.parseInt(sc.nextLine().substring(2)));
-                    c.setCenterY(Integer.parseInt(sc.nextLine().substring(2)));
+                    
+                    line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("r")) {
+                        c.setRadius(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default radius
+                        c.setRadius(1);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("x")) {
+                        c.setCenterX(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default x
+                        c.setCenterX(0);
+                        readNext = false;
+                    }
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("y")) {
+                        c.setCenterY(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default y
+                        c.setCenterY(0);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("color")) {
+                        line = line[1].split(", ",3);
+                        Color co = new Color(Integer.parseInt(line[0]),Integer.parseInt(line[1]),Integer.parseInt(line[2]),255);
+                        c.setFill(co);
+                        readNext = true;
+                    }
+                    else    { // default color
+                        c.setFill(Color.BLACK);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("border"))    {
+                        c.setStrokeWidth(Integer.parseInt(line[1]));
+                        readNext = true;
+                    }
+                    else    { // default border
+                        c.setStrokeWidth(0);
+                        readNext = false;
+                    }
+                    
+                    if(readNext)
+                        line = sc.nextLine().split(": ",2);
+                    if(line[0].equals("borderColor")) {
+                        line = line[1].split(", ",3);
+                        Color co = new Color(Integer.parseInt(line[0]),Integer.parseInt(line[1]),Integer.parseInt(line[2]),255);
+                        c.setStroke(co);
+                        readNext = true;
+                    }
+                    else    { // default border color
+                        c.setStroke(Color.BLACK);
+                        readNext = false;
+                    }
+                    
                     shapes[i] = c;
                 }
             }
