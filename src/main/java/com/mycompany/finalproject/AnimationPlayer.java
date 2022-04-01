@@ -1,18 +1,17 @@
 package com.mycompany.finalproject;
 
-import java.lang.Integer;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import javafx.application.Application;
 
-import javafx.scene.shape.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Line;
 import javafx.scene.paint.Color;
 
 import javafx.util.Duration;
-import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
